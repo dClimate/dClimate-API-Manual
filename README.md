@@ -22,7 +22,7 @@ Now set the required path parameters, dataset and location. For ERA5 temperature
 
 ## Pulling Data Programmatically (Python 3)
 
-Making this same request using Python 3 is simple using the built in request library. You can load data into a Python dictionary using the following code:
+Making this same request using Python 3 is simple using the built in `requests` library. You can load data into a Python dictionary using the following code:
 
 ```python
 import requests as r
