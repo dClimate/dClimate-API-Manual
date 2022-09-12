@@ -25,7 +25,7 @@ Now set the required path parameters, dataset and location. For ERA5 temperature
 Making this same request using Python 3 is simple using the built in `requests` library. You can load data into a Python dictionary using the following code:
 
 ```python
-import requests as r
+import requests
 
 key = ... # dClimate API authorization token
 
