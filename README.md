@@ -6,7 +6,13 @@ The dClimate REST API enables programmatic access to a decentralized network of 
 
 ## Account Setup
 
-Before you can make requests, you must get a free authorization token by [registering for an account](https://api.dclimate.net/register). Upon registering, your authorization token will be emailed to you along with a unique verification link. You must click the link to verify your email address before your token becomes active. It's also recommended you save your authorization token somewhere accessible as you will need to use this token with each request. When making requests via the [API documentation page](https://api.dclimate.net), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
+<!--  Before you can make requests, you must get a free authorization token by [registering for an account](https://api.dclimate.net/register). -->
+
+Before you can make requests, you must get a free authorization token by registering for an account. To register go to the [API documentation page](https://api.dclimate.net) and select the Account Registration dropdown. Click on the `user/register` endpoint and select try it out on the top right. Fill out the required fields and press `Excecute`.
+
+<!-- Upon registering, your authorization token will be emailed to you along with a unique verification link. -->
+
+After running you will see your authorization token shown below and you must respond to the verification email before your token becomes active. It's also recommended you save your authorization token somewhere accessible as you will need to use this token with each request. When making requests via the [API documentation page](https://api.dclimate.net), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
 
 ## Intro to dClimate Data
 
