@@ -13,6 +13,19 @@ token = ... # insert your dClimate API auth token
 headers = {'Authorization': token}
 ```
 
+View all available zarr datasets
+``` python
+dataset_list = requests.get(
+    'http://45.55.32.80/apiv4/datasets', headers=headers).json()
+```
+
+View metadata for a given dataset
+``` python
+dataset = 'prism-precip-daily'
+metadata = requests.get(
+    f'http://45.55.32.80/apiv4/metadata/{dataset}', headers=headers).json()
+```
+
 Access data via python requests as json with included shapefile
 ``` python
 with open("/path/to/shapefile/shape.zip", "r") as f:
@@ -86,7 +99,7 @@ Valid output formats are `'array', 'netcdf'`. The former returns a numpy array o
 Requests in the body of a POST can take two forms:
 * A simple query in JSON format listing the various request parameters under the key `json`.
 * A two-key dict containing request parameters under `json` and zipped shapefile data under `shape_file`
-​
+
 In the latter case the values of each item in the dict should take the form of `(title, object, format)`. The JSON's title should be `data.json` and its format `application/json` while the shapefile should be `shape_file.zip` and `application/octet` (binary format), respectively. The object will contain the corresponding request parameters or zipped shapefile, respectively
 ​
 #### Shapefile inputs 
@@ -138,3 +151,23 @@ Types of invalid requests include:
 * Selecting an area/time period with all null data
 * Requesting invalid output formats (or just misspelling them)
 ​
+## Structure of single point requests
+This API is capable of querying gridded datasets from dClimate using the same structure as `apiv3/` requests. The `apiv4/grid-history/` endpoint will attempt to query a gridded zarr dataset. If the dataset cannot be found as a zarr, the API will attempt to find a non-zarr version.
+
+Note: Datasets that cannot be found as a zarr will be much slower to retrieve.
+
+#### Path arguments
+​
+The request should be in the following format
+
+`"http://45.55.32.80/apiv4/grid-history/<dataset_name>/<latitude>_<longitude>"`
+
+#### Query arguments
+
+``` python
+use_imperial_units : bool # default true
+desired_units : str # default none
+as_of : str # default none, iso 8601 formatted date
+```
+
+**Note**: The `as_of` parameter will show you a datasets history as of a certain date in the past. If this is a zarr dataset but the as_of date is before the zarr dataset's creation the API will attempt to look for this dataset's history as a non-zarr. The `apiv4/grid-history/` endpoint will only throw an error due to the `as_of` parameter if it is in the future or if it is before the creation of both the non-zarr and zarr version of the dataset.
