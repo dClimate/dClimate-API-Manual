@@ -1,62 +1,136 @@
-# dClimate-API-Manual
+[zarr_api_addr]: http://45.55.32.80/
 
-## Description
+# dClimate-Zarr-API-Manual
 
-The dClimate REST API enables programmatic access to a decentralized network of climate data in a simple yet comprehensive manner.
+## Quickstart
+
+Enter a valid dClimate API auth token
+``` python
+import requests
+import json
+​
+token = ... # insert your dClimate API auth token
+headers = {'Authorization': token}
+```
+
+Access data via python requests as json with included shapefile
+``` python
+with open("/path/to/shapefile/shape.zip", "r") as f:
+    files = {
+     'shape_file': ("shape.zip", f, 'application/octet'),
+     'json': (
+        "data.json",
+        json.dumps(
+            {
+                "spatial_agg_params": {"agg_method": "mean"},
+                "polygon_params": {"epsg_crs": 4326}
+            }),
+        "application/json")
+    }
+    r1 = requests.post("http://45.55.32.80/geo_temporal_query/prism-precip-daily?output_format=array", files=files, headers=headers)
+    data_dict = r1.json()
+```
+
+Access data via python requests as netcdf (no shapefile needed)
+``` python
+import xarray as xr
+r = requests.post(
+        "http://45.55.32.80/geo_temporal_query/prism-precip-daily?output_format=netcdf",
+        json={"circle_params": {"radius": 50, "center_lat": 43, "center_lon": -123}},
+        headers=headers
+    )
+ds = xr.open_dataset(r.content)
+```
+
+Access data in the format of the v3 API:
+``` python
+r = requests.get(
+    "http://45.55.32.80/grid-history/prism-precip-daily/40_-120",
+    params={"desired_units": "mm"},
+    headers=headers
+)
+data = r.json()["data"]
+```
 
 ## Account Setup
 
-<!--  Before you can make requests, you must get a free authorization token by [registering for an account](https://api.dclimate.net/register). -->
+Before you can make requests, you must get a free authorization token by [registering for an account](http://45.55.32.80/register). Upon registering, your authorization token will be emailed to you along with a unique verification link.
 
-Before you can make requests, you must get a free authorization token by registering for an account. To register go to the [API documentation page](https://api.dclimate.net) and select the Account Registration dropdown. Click on the `user/register` endpoint and select try it out on the top right. Fill out the required fields and press `Excecute`.
+When making requests via the [API documentation page](http://45.55.32.80/apiv3), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
 
-<!-- Upon registering, your authorization token will be emailed to you along with a unique verification link. -->
+## Structure of geospacial requests
+​
+This API is capable querying N-dimensional data from dClimate. The API works by parsing the request and passing it within the *body* of a POST request to a separate dClimate client. This client packages the data on the server side according to the passed requests and returns data within a JSON.
 
-After running you will see your authorization token shown below and you must respond to the verification email before your token becomes active. It's also recommended you save your authorization token somewhere accessible as you will need to use this token with each request. When making requests via the [API documentation page](https://api.dclimate.net), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
+Below is a short description of how to structure requests to the API and specify parameters correctly.
 
-## Intro to dClimate Data
+Note that as the API is in beta **it is incumbent on users to structure requests and inputs carefully** — error detection and validation is not fully built out and incorrectly projected shapefiles, badly formatted datetimes, etc. will likely fail in unpredictable ways.
 
-The [API documentation page](https://api.dclimate.net) shows available endpoints categorized by type and index method. For example, `Grid File Dataset History` contains datasets spatially indexed in a format that consists of a matrix of cells, or pixels, organized into rows and columns where each cell contains a value for each grid point across a two dimensional surface. On the contrary, the `GHCN Dataset History`, `CME Station History`, and other station endpoints contain data provided by ground based station and are indexed by a station ID. Other datasets include forecast data, hurricane and tropical storm data, as well as agricultural yield data and more. A list of all available datasets can be found under the `Dataset Information` tab. 
+### Request format
 
-## Pulling Data
+#### Header
+​
+The request header should be in the following format
 
-Now that you have your authorization token you can make your first request. The easiest way to pull data is by using the [API documentation page](https://api.dclimate.net) and requires no technical skills. To begin click on a tab containing the dataset you would like to pull. The ERA5 dataset is a good example to use as it is a globally spanning gridded dataset containing over 30 years of hourly historical data across multiple climate catagories such as precipitation, temperature, and wind. <!--  We'll talk more about dataset selection below.  -->
+`"http://45.55.32.80/geo_temporal_query/<dataset_name>?output_format=<desired_format>"`
 
-To pull temperature data from ERA5 first we need to click on the `Grid File Dataset History` tab, click on the `GET` request endpoint and click `"Try it out"` on the top right. Next, paste your authorization token on the top field. Now you will set the parameters of our request. The first important parameter is the units you want the data to be displayed in. For temperature datasets, set the `use_imperial_units` parameter to `true` to get data in degrees fahrenheit. Alternatively you can attempt to get data in a different unit by setting the `desired_units` to an applicable unit scale such as `celsius` or `kelvin` for temperature. The next important parameter for hourly datasets in what timezone you want the data to be indexed in. For UTC time set the `convert_to_local_time` to `False`. If left untouched, this parameter will default to data indexed by the grid's local time. When pulling data programmatically these values should be passed via the request parameters.
+Valid output formats are `'array', 'netcdf'`. The former returns a numpy array of values and the latter a NetCDF file.
+​
 
-Now set the required path parameters, dataset and location. For ERA5 temperature set the `dataset` to `era5_land_2m_temp-hourly`. In this example we will use New York, NY which has an approximate latitude of `40.7128° N` and longitude of `74.0060° W`. When passing the coordinates via the api use a positive value for north and east and a negative value for south and west. Therefore, set `lat` to `40.7128` and `lon` to `-74.0060`. Finally, click `Execute` and if your request was successful a link to download your data as a csv should appear at the bottom.
+#### Body
+​
+Requests in the body of a POST can take two forms:
+* A simple query in JSON format listing the various request parameters under the key `json`.
+* A two-key dict containing request parameters under `json` and zipped shapefile data under `shape_file`
+​
+In the latter case the values of each item in the dict should take the form of `(title, object, format)`. The JSON's title should be `data.json` and its format `application/json` while the shapefile should be `shape_file.zip` and `application/octet` (binary format), respectively. The object will contain the corresponding request parameters or zipped shapefile, respectively
+​
+#### Shapefile inputs 
+​
+All shapefiles uploaded must be **zipped** and in **EPSG:4326 (WGS84)** projection.
+​
+### Parameters
+​
+Queries can take a number of input parameters for some combination of spatial and temporal filters and aggregations to perform during the request. These are listed and then described below.
 
-## Pulling Data Programmatically (Python 3)
-
-Making this same request using Python 3 is simple using the built in `requests` library. You can load data into a Python dictionary using the following code:
-
+**Spatial parameters**
+``` python
+point_params : (lat: float, lon: float)
+circle_params : (center_lat: float, center_lon: float, radius: float) # radius in KM
+rectangle_params : (min_lat: float, min_lon: float, max_lat: float, max_lon: float)
+polygon_params : (epsg_crs: int)
+multiple_points_params : (epsg_crs: int)
+spatial_agg_params : (agg_method: str)
+```
+​
+**Temporal parameters**
 ```python
-import requests
-
-key = ... # dClimate API authorization token
-
-dataset = "era5_land_2m_temp-hourly"
-
-lat, lon = 40.7128, -74.0060
-
-params = {
-    "use_imperial_units": True,
-    "convert_to_local_time": False
-    }
-
-headers = {
-    "Authorization": key,
-    "accept": "application/json" 
-    }
-
-response = requests.get(
-    f"https://api.dclimate.net/apiv3/grid-history/{dataset}/{lat}_{lon}",
-    params=params,
-    headers=headers)
-
-print(response.json())
-
+time_range : [start_time: str, end_time: str] # in ISO Format structured as list with two elements
+temporal_agg_params : (time_period: str, agg_method: str, time_unit: int)
+rolling_agg_params : (window_size: int, agg_method: str)
 ```
 
-<!-- ## Understanding Metadata -->
+All spatial units are in degrees of latitude/longitude unless otherwise specified.
 
+Valid aggregation methods for all `agg` requests are `'min'`, `'max'`, `'median'`, `'mean'`, `'std'`, `'sum'`. Only one may be specified in a given set of parameters.
+
+Valid time periods for `temporal_agg_params` are `'hour'`, `'day'`, `'week'`, `'month'`, `'quarter'`, `'year'`, `'all'`. Only one may be specified in a given set of parameters.
+
+The `epsg_crs` for `polygon_params` and `multiple_points_params` refers to the Coordinate Reference System (projection) of the dataset. It defaults to 4326 (WGS84), or recommended projection. We cannot guarantee performance with shapefiles uploaded in other projections, particularly projected (metric) projections).
+
+The `time_unit` for `temporal_agg_params` refers to the number of time periods to aggregate by. It defaults to 1. 
+
+The `window_size` for `rolling_agg_params` refers to the number of units of time used to construct the rolling aggregation. The specific unit depends on the dataset.
+​
+### Validation and errors
+​
+Both the API and client perform basic validation checks on the provided requests and will reject invalid requests. 
+​
+Types of invalid requests include:
+* Specifying too many points or too large areas
+* Specifying multiple geographic filters (e.g. polygon AND circle)
+* Specifying temporal _and_ rolling time-based aggregations
+* Providing shapefiles with invalid geometries or projections
+* Selecting an area/time period with all null data
+* Requesting invalid output formats (or just misspelling them)
+​
