@@ -170,4 +170,4 @@ desired_units : str # default none
 as_of : str # default none, iso 8601 formatted date
 ```
 
-**Note**: The `as_of` parameter will show you a datasets history as of a certain date in the past. If this is a zarr dataset but the as_of date is before the zarr dataset's creation the API will attempt to look for this dataset's history as a non-zarr. The `apiv4/grid-history/` endpoint will only throw an error due to the `as_of` parameter if it is in the future or if it is before the creation of both the non-zarr and zarr version of the dataset.
+**Note**: The `as_of` parameter will show you a datasets history as of a certain date in the past. If this is a zarr dataset but the as_of date is before the zarr dataset's creation, the API will attempt to look for this dataset's history as a non-zarr. The `apiv4/grid-history/` endpoint will return an error if `as_of` is before the creation of both the zarr and non-zarr version of the dataset.
