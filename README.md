@@ -157,8 +157,14 @@ This API is capable of querying gridded datasets from dClimate using the same st
 Note: Datasets that cannot be found as a zarr will be much slower to retrieve.
 
 #### Path arguments
+
+``` python
+dataset_name : str
+latitude : float
+longitude : float
+```
 ​
-The request should be in the following format
+The request should be a GET in the following format
 
 `"http://45.55.32.80/apiv4/grid-history/<dataset_name>/<latitude>_<longitude>"`
 
