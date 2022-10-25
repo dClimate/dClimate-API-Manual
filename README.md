@@ -40,14 +40,10 @@ with open("/path/to/shapefile/shape.zip", "r") as f:
             }),
         "application/json")
     }
-<<<<<<< HEAD
-    r1 = requests.post("https://beta-api.dclimate.net/apiv4/geo_temporal_query/prism-precip-daily?output_format=array", files=files, headers=headers)
-=======
     r1 = requests.post(
-        "http://45.55.32.80/apiv4/geo_temporal_query/prism-precip-daily?output_format=array",
+        "http://beta-api.dclimate.net/apiv4/geo_temporal_query/prism-precip-daily?output_format=array",
         files=files,
         headers=headers)
->>>>>>> febef69b8600b27b2e281d39f78906d632a54e68
     data_dict = r1.json()
 ```
 
