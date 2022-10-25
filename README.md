@@ -40,7 +40,10 @@ with open("/path/to/shapefile/shape.zip", "r") as f:
             }),
         "application/json")
     }
-    r1 = requests.post("http://45.55.32.80/apiv4/geo_temporal_query/prism-precip-daily?output_format=array", files=files, headers=headers)
+    r1 = requests.post(
+        "http://45.55.32.80/apiv4/geo_temporal_query/prism-precip-daily?output_format=array",
+        files=files,
+        headers=headers)
     data_dict = r1.json()
 ```
 
