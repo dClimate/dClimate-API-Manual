@@ -1,4 +1,4 @@
-[zarr_api_addr]: http://45.55.32.80/
+[zarr_api_addr]: https://beta-api.dclimate.net/
 
 # dClimate-Zarr-API-Manual
 
@@ -16,14 +16,14 @@ headers = {'Authorization': token}
 View all available zarr datasets
 ``` python
 dataset_list = requests.get(
-    'http://45.55.32.80/apiv4/datasets', headers=headers).json()
+    'https://beta-api.dclimate.net/apiv4/datasets', headers=headers).json()
 ```
 
 View metadata for a given dataset
 ``` python
 dataset = 'prism-precip-daily'
 metadata = requests.get(
-    f'http://45.55.32.80/apiv4/metadata/{dataset}', headers=headers).json()
+    f'https://beta-api.dclimate.net/apiv4/metadata/{dataset}', headers=headers).json()
 ```
 
 Access data via python requests as json with included shapefile
@@ -40,7 +40,7 @@ with open("/path/to/shapefile/shape.zip", "r") as f:
             }),
         "application/json")
     }
-    r1 = requests.post("http://45.55.32.80/apiv4/geo_temporal_query/prism-precip-daily?output_format=array", files=files, headers=headers)
+    r1 = requests.post("https://beta-api.dclimate.net/apiv4/geo_temporal_query/prism-precip-daily?output_format=array", files=files, headers=headers)
     data_dict = r1.json()
 ```
 
@@ -48,7 +48,7 @@ Access data via python requests as netcdf (no shapefile needed)
 ``` python
 import xarray as xr
 r = requests.post(
-        "http://45.55.32.80/apiv4/geo_temporal_query/prism-precip-daily?output_format=netcdf",
+        "https://beta-api.dclimate.net/apiv4/geo_temporal_query/prism-precip-daily?output_format=netcdf",
         json={"circle_params": {"radius": 50, "center_lat": 43, "center_lon": -123}},
         headers=headers
     )
@@ -58,7 +58,7 @@ ds = xr.open_dataset(r.content)
 Access data in the format of the v3 API:
 ``` python
 r = requests.get(
-    "http://45.55.32.80/apiv4/grid-history/prism-precip-daily/40_-120",
+    "https://beta-api.dclimate.net/apiv4/grid-history/prism-precip-daily/40_-120",
     params={"desired_units": "mm"},
     headers=headers
 )
@@ -67,9 +67,9 @@ data = r.json()["data"]
 
 ## Account Setup
 
-Before you can make requests, you must get a free authorization token by [registering for an account](http://45.55.32.80/register). Upon registering, your authorization token will be emailed to you along with a unique verification link.
+Before you can make requests, you must get a free authorization token by [registering for an account](https://beta-api.dclimate.net/register). Upon registering, your authorization token will be emailed to you along with a unique verification link.
 
-When making requests via the [API documentation page](http://45.55.32.80/apiv3), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
+When making requests via the [API documentation page](https://beta-api.dclimate.net/apiv3), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
 
 **API Access Notice**
 
@@ -89,7 +89,7 @@ Note that as the API is in beta **it is incumbent on users to structure requests
 ​
 The request header should be in the following format
 
-`"http://45.55.32.80/apiv4/geo_temporal_query/<dataset_name>?output_format=<desired_format>"`
+`"https://beta-api.dclimate.net/apiv4/geo_temporal_query/<dataset_name>?output_format=<desired_format>"`
 
 Valid output formats are `'array', 'netcdf'`. The former returns a numpy array of values and the latter a NetCDF file.
 ​
@@ -160,7 +160,7 @@ Note: Datasets that cannot be found as a zarr will be much slower to retrieve.
 ​
 The request should be in the following format
 
-`"http://45.55.32.80/apiv4/grid-history/<dataset_name>/<latitude>_<longitude>"`
+`"https://beta-api.dclimate.net/apiv4/grid-history/<dataset_name>/<latitude>_<longitude>"`
 
 #### Query arguments
 
