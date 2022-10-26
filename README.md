@@ -76,7 +76,8 @@ When making requests via the [API documentation page](https://beta-api.dclimate.
 
 **API Access Notice**
 
-At the moment, tokens granting access to `/apiv3` do not inherently grant access to `/apiv4`. Please contact an admin or make a slack post in `#data-help` for access, providing the email address associated with your api account.
+At the moment, tokens granting access to `/apiv3` do not inherently grant access to `/apiv4`. For access please fill out our v4 [community interest form](https://csti51zef2d.typeform.com/ZarrAPI).
+
 
 ## Structure of geospacial requests
 ​
