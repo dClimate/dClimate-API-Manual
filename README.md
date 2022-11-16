@@ -19,6 +19,12 @@ dataset_list = requests.get(
     'https://api.dclimate.net/apiv4/datasets', headers=headers).json()
 ```
 
+Get most recent IPFS CIDs/hash by dataset
+``` python
+dataset_hash_dict = requests.get(
+    'https://api.dclimate.net/apiv4/get_heads', headers=headers).json()
+```
+
 View metadata for a given dataset
 ``` python
 dataset = 'prism-precip-daily'
