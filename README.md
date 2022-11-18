@@ -85,9 +85,9 @@ When making requests via the [API documentation page](https://api.dclimate.net/a
 At the moment, tokens granting access to `/apiv3` do not inherently grant access to `/apiv4`. For access please fill out our v4 [community interest form](https://csti51zef2d.typeform.com/ZarrAPI).
 
 
-## Structure of geospacial requests
+## Structure of geospatial requests
 ​
-This API is capable querying N-dimensional data from dClimate. The API works by parsing the request and passing it within the *body* of a POST request to a separate dClimate client. This client packages the data on the server side according to the passed requests and returns data within a JSON.
+This API is capable of querying N-dimensional data from dClimate. The API works by parsing the request and passing it within the *body* of a POST request to a separate dClimate client. This client packages the data on the server side according to the passed requests and returns data within a JSON.
 
 Below is a short description of how to structure requests to the API and specify parameters correctly.
 
@@ -153,6 +153,7 @@ The `window_size` for `rolling_agg_params` refers to the number of units of time
 ​
 Both the API and client perform basic validation checks on the provided requests and will reject invalid requests. 
 ​
+
 Types of invalid requests include:
 * Specifying too many points or too large areas
 * Specifying multiple geographic filters (e.g. polygon AND circle)
@@ -186,4 +187,4 @@ desired_units : str # default none
 as_of : str # default none, iso 8601 formatted date
 ```
 
-**Note**: The `as_of` parameter will show you a datasets history as of a certain date in the past. If this is a zarr dataset but the as_of date is before the zarr dataset's creation, the API will attempt to look for this dataset's history as a non-zarr. The `apiv4/grid-history/` endpoint will return an error if `as_of` is before the creation of both the zarr and non-zarr version of the dataset.
+**Note**: The `as_of` parameter will show you a dataset's history as of a certain date in the past. If this is a zarr dataset but the as_of date is before the zarr dataset's creation, the API will attempt to look for this dataset's history as a non-zarr. The `apiv4/grid-history/` endpoint will return an error if `as_of` is before the creation of both the zarr and non-zarr version of the dataset.
