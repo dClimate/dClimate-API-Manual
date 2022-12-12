@@ -34,7 +34,8 @@ metadata = requests.get(
 
 Access data via python requests as json with included shapefile
 ``` python
-with open("/path/to/shapefile/shape.zip", "r") as f:
+# ensure zipfile is read as binary (set mode="rb")
+with open("/path/to/shapefile/shape.zip", mode="rb") as f:
     files = {
      'shape_file': ("shape.zip", f, 'application/octet'),
      'json': (
