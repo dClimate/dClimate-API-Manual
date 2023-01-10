@@ -65,7 +65,7 @@ r = requests.post(
 ds = xr.open_dataset(r.content)
 ```
 
-Access data in the format of the v3 API:
+Access data for a single point (includes backwards compatibility with `apiv3` gridded datasets):
 ``` python
 r = requests.get(
     "https://api.dclimate.net/apiv4/grid-history/prism-precip-daily/40_-120",
