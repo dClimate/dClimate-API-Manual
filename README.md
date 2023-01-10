@@ -81,10 +81,6 @@ Before you can make requests, you must get a free authorization token by [regist
 
 When making requests via the [API documentation page](https://api.dclimate.net/apiv3), you should insert this token in the top field labeled `Authorization`. When making requests programmatically, pass this token in the request headers under the key `Authorization`.
 
-**API Access Notice**
-
-At the moment, tokens granting access to `/apiv3` do not inherently grant access to `/apiv4`. For access please fill out our v4 [community interest form](https://csti51zef2d.typeform.com/ZarrAPI).
-
 
 ## Structure of geospatial requests
 ​
